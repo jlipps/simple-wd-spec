@@ -4,6 +4,8 @@ This document is essentially a cheat sheet for the official [WebDriver spec](htt
 
 The approach used here is to simply look at the supported endpoints along with their inputs and outputs, without worrying how the implementation is supposed to work. This should be beneficial to client library implementers as well as remote end implementers looking for some quick highlights. And in most cases there are examples to illustrate
 
+**DISCLAIMER**: This is _not_ the official spec. It is my interpretation of it and an attempt to present the most salient bits of it in a more digestible fashion. You should always consult the official spec before beginning work on a client or server implementation!
+
 ## Introduction
 
 What is WebDriver? From the spec:
