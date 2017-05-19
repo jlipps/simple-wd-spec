@@ -214,26 +214,36 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 [Spec description](https://www.w3.org/TR/webdriver/#new-session):
 > The `New Session` command creates a new WebDriver session with the endpoint node. If the creation fails, a `session not created` error is returned.
 
-**URL variables:**
+* **URL variables:**
+	* None
+* **Request parameters:**
+	* `capabilities`: a JSON object with a special structure that's so complex it deserves its own section. See "Capabilities" under "Data Structures" below.
+	* Example:
 
-* None
+		```json
+		{"capabilities": {...}}
+		```
+		
+* **Response properties:**
+	* `sessionId`: a string, the UUID reference of the session, to be used in subsequent requests
+	* `capabilities`: a JSON object, the same object as was sent in via the request
+	* Example:
 
-**Request parameters:**
-
-* `capabilities`: a JSON object with a special structure that's so complex it deserves its own section. See "Capabilities" under "Data Structures" below.
-
-**Response properties:**
-
-* `sessionId`: a string, the UUID reference of the session, to be used in subsequent requests
-* `capabilities`: a JSON object, the same object as was sent in via the request
-
-**Possible errors:**
-
-* `session not created` (`500`): if the session could not be started for a variety of reasons:
-	* maximum session count exceeded
-	* capabilities could not be processed
-	* any other problem in session creation
-* `invalid argument` (`400`): if the capabilities object was malformed in some way (see section on capabilities for examples)
+		```json
+		{
+		  "value": {
+		    "sessionId": "1234567890",
+		    "capabilities": {...}
+		  }
+		}
+		```
+		 
+* **Possible errors:**
+	* `session not created` (`500`): if the session could not be started for a variety of reasons:
+		* maximum session count exceeded
+		* capabilities could not be processed
+		* any other problem in session creation
+	* `invalid argument` (`400`): if the capabilities object was malformed in some way (see section on capabilities for examples)
 
 ### Delete Session
 
@@ -244,21 +254,14 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 [Spec description](https://www.w3.org/TR/webdriver/#delete-session):
 > The `Delete Session` command closes any top-level browsing contexts associated with the current session, terminates the connection, and finally closes the current session.
 
-**URL variables:**
-
-* `session id`: the id of a currently active session
-
-**Request parameters:**
-
-* None
-
-**Response properties:**
-
-* None
-
-**Possible errors:**
-
-* None
+* **URL variables:**
+	* `session id`: the id of a currently active session
+* **Request parameters:**
+	* None
+* **Response properties:**
+	* None
+* **Possible errors:**
+	* None
 
 ### Status
 
@@ -269,23 +272,28 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 [Spec description](https://www.w3.org/TR/webdriver/#status):
 > The `Status` command returns information about whether a remote end is in a state in which it can create new sessions and can additionally include arbitrary meta information that is specific to the implementation.
 
-**URL variables:**
-
-* None
-
-**Request parameters:**
-
-* None
-
-**Response properties:**
-
-* `ready`: boolean value; whether the server has the capability to start more sessions
-* `message`: implementation-specific string describing readiness state
-* arbitrary other properties denoting metadata returned by the remote end
-
-**Possible errors:**
-
-* None
+* **URL variables:**
+	* None
+* **Request parameters:**
+	* None
+* **Response properties:**
+	* `ready`: boolean value; whether the server has the capability to start more sessions
+	* `message`: implementation-specific string describing readiness state
+	* arbitrary other properties denoting metadata returned by the remote end
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "ready": true,
+		    "message": "server ready",
+		    "uptime": 123457890
+		  }
+		}
+		```
+		
+* **Possible errors:**
+	* None
 
 ### Get Timeouts
 ### Set Timeouts
