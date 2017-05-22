@@ -296,7 +296,67 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* None
 
 ### Get Timeouts
+
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/timeouts|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-timeouts):
+> The `Get Timeouts` command gets timeout durations associated with the current session.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:**
+	* None
+* **Response properties:**
+	* `script`: value (in ms) of the session script timeout
+		
+		> A session has an associated _session script timeout_ that specifies a time to wait for scripts to run. If equal to null then session script timeout will be indefinite. Unless stated otherwise it is 30,000 milliseconds.
+		
+	* `pageLoad`: value (in ms) of the session page load timeout
+	
+		> A session has an associated _session page load timeout_ that specifies a time to wait for the page loading to complete. Unless stated otherwise it is 300,000 milliseconds.
+	
+	* `implicit`: value (in ms) of the session implicit wait timeout
+	
+		> A session has an associated _session implicit wait timeout_ that specifies a time to wait in milliseconds for the element location strategy when retreiving elements and when waiting for an element to become interactable when performing element interaction. Unless stated otherwise it is zero milliseconds.
+	
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "script": 30000,
+		    "pageLoad": 300000,
+		    "implicit": 0
+		  }
+		}
+		```
+		
+* **Possible errors:**
+	* None
+	
 ### Set Timeouts
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/timeouts|
+
+[Spec description](https://www.w3.org/TR/webdriver/#set-timeouts):
+> The `Set Timeouts` command sets timeout durations associated with the current session. The timeouts that can be controlled are listed in the table of session timeouts below.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** Send one or more of the following parameters. For definition of what each of these timeouts means, see [Get Timeouts](#get-timeouts) above.
+	* `script`: integer in ms for session script timeout
+	* `pageLoad`: integer in ms for session page load timeout
+	* `implicit`: integer in ms for session implicit wait timeout
+* **Response properties:**
+	* None		
+* **Possible errors:**
+	* `invalid argument` if a parameter property was not a valid timeout, or was not an integer in the range [0, 2<sup>64</sup> - 1]
+
 ### Go
 ### Get Current URL
 ### Back
