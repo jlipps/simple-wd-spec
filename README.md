@@ -153,9 +153,9 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session|[New Session](#new-session)|
 |DELETE|/session/{session id}|[Delete Session](#delete-session)|
 |GET|/status|[Status](#status)|
-|GET|/session/{session id}/timeouts|Get Timeouts|
-|POST|/session/{session id}/timeouts|Set Timeouts|
-|POST|/session/{session id}/url|Go|
+|GET|/session/{session id}/timeouts|[Get Timeouts](#get-timeouts)|
+|POST|/session/{session id}/timeouts|[Set Timeouts](#set-timeouts)|
+|POST|/session/{session id}/url|[Go](#go)|
 |GET|/session/{session id}/url|Get Current URL|
 |POST|/session/{session id}/back|Back|
 |POST|/session/{session id}/forward|Forward|
@@ -358,6 +358,26 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `invalid argument` if a parameter property was not a valid timeout, or was not an integer in the range [0, 2<sup>64</sup> - 1]
 
 ### Go
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/url|
+
+[Spec description](https://www.w3.org/TR/webdriver/#go):
+> The `Go` command is used to cause the user agent to navigate the current top-level browsing context a new location.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `url`: string representing an absolute URL (beginning with `http(s)`), possibly including a fragment (`#...`). Could also be a local scheme (`about:` etc).
+* **Response properties:**
+	* None		
+* **Possible errors:**
+	* `invalid argument` if:
+	    * `url` parameter is missing
+	    * `url` parameter doesn't conform to above spec 		
+	* `timeout` if `url` is different from the current URL, and the new page does not load within the page load timeout.
+
 ### Get Current URL
 ### Back
 ### Forward
