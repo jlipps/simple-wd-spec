@@ -156,7 +156,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/timeouts|[Get Timeouts](#get-timeouts)|
 |POST|/session/{session id}/timeouts|[Set Timeouts](#set-timeouts)|
 |POST|/session/{session id}/url|[Go](#go)|
-|GET|/session/{session id}/url|Get Current URL|
+|GET|/session/{session id}/url|[Get Current URL](#get-current-url)|
 |POST|/session/{session id}/back|Back|
 |POST|/session/{session id}/forward|Forward|
 |POST|/session/{session id}/refresh|Refresh|
@@ -355,7 +355,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 * **Response properties:**
 	* None		
 * **Possible errors:**
-	* `invalid argument` if a parameter property was not a valid timeout, or was not an integer in the range [0, 2<sup>64</sup> - 1]
+	* `invalid argument` (`400`) if a parameter property was not a valid timeout, or was not an integer in the range [0, 2<sup>64</sup> - 1]
 
 ### Go
 
@@ -373,12 +373,29 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 * **Response properties:**
 	* None		
 * **Possible errors:**
-	* `invalid argument` if:
+	* `invalid argument` (`400`) if:
 	    * `url` parameter is missing
 	    * `url` parameter doesn't conform to above spec 		
-	* `timeout` if `url` is different from the current URL, and the new page does not load within the page load timeout.
+	* `timeout` (`408`) if `url` is different from the current URL, and the new page does not load within the page load timeout.
 
 ### Get Current URL
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/url|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-current-url):
+> The `Get Current URL` command returns the URL of the current top-level browsing context.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response properties:**
+	* `url`: current document URL of the top-level browsing context
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+
 ### Back
 ### Forward
 ### Refresh
