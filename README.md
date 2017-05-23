@@ -144,7 +144,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
     ```
     
     I'm calling `foo` a "response property" with a value of `"bar"`.
-* "Possible errors": errors and codes it's possible for the command to return in case of an error specific to that command. Note that regardless of what's in this list, it's always possible for some errors to occur (e.g., `invalid session id` or `unknown error`). (A value of "None" here means "no particularly relevant errors", not that it's not possible for an error to occur!)
+* "Possible errors": errors and codes it's possible for the command to return in case of an error specific to that command. Note that regardless of what's in this list, it's always possible for some errors to occur (e.g., `invalid session id` or `unknown error`. As another example, most endpoints attempt to handle user prompts in the course of operation, which might result in `unexpected alert open`. See [Handling User Prompts](#handling-user-prompts) for more information). A value of "None" here means "no particularly relevant errors", not that it's not possible for an error to occur!
 
 ### List of all endpoints
 
@@ -157,10 +157,10 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/timeouts|[Set Timeouts](#set-timeouts)|
 |POST|/session/{session id}/url|[Go](#go)|
 |GET|/session/{session id}/url|[Get Current URL](#get-current-url)|
-|POST|/session/{session id}/back|Back|
-|POST|/session/{session id}/forward|Forward|
-|POST|/session/{session id}/refresh|Refresh|
-|GET|/session/{session id}/title|Get Title|
+|POST|/session/{session id}/back|[Back](#back)|
+|POST|/session/{session id}/forward|[Forward](#forward)|
+|POST|/session/{session id}/refresh|[Refresh](#refresh)|
+|GET|/session/{session id}/title|[Get Title](#get-title)|
 |GET|/session/{session id}/window|Get Window Handle|
 |DELETE|/session/{session id}/window|Close Window|
 |POST|/session/{session id}/window|Switch To Window|
@@ -217,7 +217,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 * **URL variables:**
 	* None
 * **Request parameters:**
-	* `capabilities`: a JSON object with a special structure that's so complex it deserves its own section. See "Capabilities" under "Data Structures" below.
+	* `capabilities`: a JSON object with a special structure that's so complex it deserves its own section. See [Capabilities](#capabilities) under [Other Topics](#other-topics) below.
 	* Example:
 
 		```json
@@ -375,7 +375,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 * **Possible errors:**
 	* `invalid argument` (`400`) if:
 	    * `url` parameter is missing
-	    * `url` parameter doesn't conform to above spec 		
+	    * `url` parameter doesn't conform to above spec
 	* `timeout` (`408`) if `url` is different from the current URL, and the new page does not load within the page load timeout.
 
 ### Get Current URL
@@ -397,9 +397,80 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 
 ### Back
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/back|
+
+[Spec description](https://www.w3.org/TR/webdriver/#back):
+> The `Back` command causes the browser to traverse one step backward in the joint session history of the current top-level browsing context. This is equivalent to pressing the back button in the browser chrome or calling `window.history.back`.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response properties:**
+	* None
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating back
+
 ### Forward
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/forward|
+
+[Spec description](https://www.w3.org/TR/webdriver/#forward):
+> The `Forward` command causes the browser to traverse one step forwards in the joint session history of the current top-level browsing context.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response properties:**
+	* None
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating forward
+	
 ### Refresh
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/refresh|
+
+[Spec description](https://www.w3.org/TR/webdriver/#refresh):
+> The `Refresh` command causes the browser to reload the page in in current top-level browsing context.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response properties:**
+	* None
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating forward
+
 ### Get Title
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/title|
+
+[Spec description](https://www.w3.org/TR/webdriver/#title):
+> The `Get Title` command returns the document title of the current top-level browsing context, equivalent to calling `document.title`.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response properties:**
+	* `title`: string, same as `document.title` of the current top-level browsing context.
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+
 ### Get Window Handle
 ### Switch To Frame
 ### Switch To Parent Frame
@@ -441,6 +512,10 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 ### Take Screenshot
 ### Take Element Screenshot
 
-## Data Structures
+## Other Topics
 
 ### Capabilities
+
+### Handling User Prompts
+
+[Spec link](https://www.w3.org/TR/webdriver/#user-prompts)
