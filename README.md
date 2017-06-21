@@ -137,7 +137,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 
 * "URL variables": variable strings slotted into URI templates
 * "Request parameters": properties of the JSON object in the request body. Could be "None", which means no body
-* "Response properties": properties of the JSON object which is the value of the `value` property of the response body. Could be "None", which means that `value` is null. For example, in this JSON response body:
+* "Response value": the value of the `value` property of the response body, when that is a single, non-object value.
+* "Response properties": properties of a JSON object which is the value of the `value` property of the response body. For example, in this JSON response body:
     
     ```json
     {"value": {"foo": "bar"}}
@@ -161,8 +162,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/forward|[Forward](#forward)|
 |POST|/session/{session id}/refresh|[Refresh](#refresh)|
 |GET|/session/{session id}/title|[Get Title](#get-title)|
-|GET|/session/{session id}/window|Get Window Handle|
-|DELETE|/session/{session id}/window|Close Window|
+|GET|/session/{session id}/window|[Get Window Handle](#get-window-handle)|
+|DELETE|/session/{session id}/window|[Close Window](#close-window)|
 |POST|/session/{session id}/window|Switch To Window|
 |GET|/session/{session id}/window/handles|Get Window Handles|
 |POST|/session/{session id}/frame|Switch To Frame|
@@ -258,8 +259,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`: the id of a currently active session
 * **Request parameters:**
 	* None
-* **Response properties:**
-	* None
+* **Response value:**
+	* `null`
 * **Possible errors:**
 	* None
 
@@ -352,8 +353,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `script`: integer in ms for session script timeout
 	* `pageLoad`: integer in ms for session page load timeout
 	* `implicit`: integer in ms for session implicit wait timeout
-* **Response properties:**
-	* None		
+* **Response value:**
+	* `null`		
 * **Possible errors:**
 	* `invalid argument` (`400`) if a parameter property was not a valid timeout, or was not an integer in the range [0, 2<sup>64</sup> - 1]
 
@@ -370,8 +371,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* `url`: string representing an absolute URL (beginning with `http(s)`), possibly including a fragment (`#...`). Could also be a local scheme (`about:` etc).
-* **Response properties:**
-	* None		
+* **Response value:**
+	* `null`
 * **Possible errors:**
 	* `invalid argument` (`400`) if:
 	    * `url` parameter is missing
@@ -391,8 +392,16 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* None
-* **Response properties:**
-	* `url`: current document URL of the top-level browsing context
+* **Response value:**
+	* current document URL of the top-level browsing context
+	* Example:
+	
+		```json
+		{
+		  "value": "https://google.com"
+		}
+		```
+	
 * **Possible errors:**
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 
@@ -409,8 +418,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* None
-* **Response properties:**
-	* None
+* **Response value:**
+	* `null`
 * **Possible errors:**
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating back
@@ -428,8 +437,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* None
-* **Response properties:**
-	* None
+* **Response value:**
+	* `null`
 * **Possible errors:**
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating forward
@@ -447,8 +456,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* None
-* **Response properties:**
-	* None
+* **Response value:**
+	* `null`
 * **Possible errors:**
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 	* `timeout` (`408`) if it took longer than the page load timeout for the `pageShow` event to fire after navigating forward
@@ -466,12 +475,66 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* None
-* **Response properties:**
-	* `title`: string, same as `document.title` of the current top-level browsing context.
+* **Response value:**
+	* a string which is the same as `document.title` of the current top-level browsing context.
+	* Example:
+	
+		```json
+		{
+		  "value": "My web page title"
+		}
+		```
+		
 * **Possible errors:**
 	* `no such window` (`400`) if the current top-level browsing context is no longer open
 
 ### Get Window Handle
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/window|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-window-handle):
+> The `Get Window Handle` command returns the window handle for the current top-level browsing context. It can be used as an argument to `Switch To Window`.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* a string which is the [window handle](#window-handles) for the current top-level browsing context
+	* Example:
+	
+		```json
+		{
+		  "value": "window-1234-5678-abcd-efgh"
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is no longer open
+
+### Close Window
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|DELETE|/session/{session id}/window|
+
+[Spec link](https://www.w3.org/TR/webdriver/#close-window):
+
+The `Close Window` command closes the current top-level browsing context. Once done, if there are no more top-level browsing contexts open, the WebDriver session itself is closed.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the current top-level browsing context is not open when this command is first called
+	
+### Switch to Window
+### Get Window Handles
 ### Switch To Frame
 ### Switch To Parent Frame
 ### Get Window Rect
@@ -515,6 +578,12 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 ## Other Topics
 
 ### Capabilities
+
+### Window Handles
+
+[Spec link](https://www.w3.org/TR/webdriver/#dfn-window-handle)
+
+Window Handles are strings representing a browsing context, whether top-level or not. The precise string is up to the remote end to generate, but it must not be the string `current`.
 
 ### Handling User Prompts
 
