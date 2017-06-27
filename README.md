@@ -534,6 +534,9 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* `no such window` (`400`) if the current top-level browsing context is not open when this command is first called
 	
 ### Switch to Window
+
+
+
 ### Get Window Handles
 ### Switch To Frame
 ### Switch To Parent Frame
@@ -579,12 +582,66 @@ The `Close Window` command closes the current top-level browsing context. Once d
 
 ### Capabilities
 
+From [the spec](https://www.w3.org/TR/webdriver/#capabilities):
+
+> WebDriver *capabilities* are used to communicate the features supported by a given implementation.
+
+Capabilities are used by the client (local end) in order to tell the remote end what it expects, and is also used by the remote end to tell the local end what it can do. In terms of structure, capabilities are simply a JSON object with keys and values (values which themselves can be objects). There are a set of "standard capabilities" that all remote ends must support:
+
+
+|Capability|Key|Value Type|Description|
+|----------|---|----------|-----------|
+|Browser name|`browserName`|string|Identifies the user agent.|
+|Browser version|`browserVersion`|string|Identifies the version of the user agent.|
+|Platform name|`platformName`|string|Identifies the operating system of the endpoint node.|
+|Accept insecure TLS certificates|`acceptInsecureCerts`|boolean|Indicates whether untrusted and self-signed TLS certificates are implicitly trusted on navigation for the duration of the session.|
+|Page load strategy|`pageLoadStrategy`|string|Defines the current session’s page load strategy. Can be `none` (doesn't wait for readiness), `normal` (waits for document `interactive` state), or `eager` (waits for document `complete` state).|
+|Proxy configuration|`proxy`|JSON Object|Defines the current session’s proxy configuration. This is a potentially complex object: see the [spec](https://www.w3.org/TR/webdriver/#dfn-proxy-configuration) for more info.|
+|Window dimensioning/positioning|`setWindowRect`|boolean|Indicates whether the remote end supports all of the commands in Resizing and Positioning Windows.|
+|Session timeouts configuration|`timeouts`|JSON Object|Describes the timeouts imposed on certain session operations, as described in the [Set Timeouts](#set-timeouts) command.|
+|Unhandled prompt behavior|`unhandledPromptBehavior`|string|Describes the current session’s user [prompt handler](#handling-user-prompts).|
+
+Remote ends can support capabilities beyond these, but they must be prefixed with a string followed by a colon, for example `moz:foobar`. This is therefore a possible set of capabilities (ignoring external structure detailed in the next section):
+
+```json
+{
+  "browserName": "firefox",
+  "browserVersion": "1234",
+  "moz:foobar": true
+ }
+```
+
+#### Processing Capabilities
+
+During the execution of the [New Session](#new-session) command, the remote end looks at the `capabilities` object passed by the client, and attempts to process it in order to set up the correct automation environment. There is a complex [algorithm](https://www.w3.org/TR/webdriver/#processing-capabilities) that defines this process. The `capabilities` object always has two properties: `alwaysMatch` (a set of capabilities) and `firstMatch` (a list of sets of capabilities):
+
+```json
+{
+  "capabilities": {
+    "alwaysMatch": {...},
+    "firstMatch": [{...}, ...]
+  }
+}
+```
+
+Basically, the remote end validates the `alwaysMatch` set and each set within the `firstMatch` list. Then it merges the `alwaysMatch` set with each of the `firstMatch` sets. Call each result of this process a "merged capabilties" object. The remote end then tries to match each merged capabilities object one-by-one. "Matching" is the process of ensuring that each capability can be unified with the remote end capability. For example, if a merged capability is `platformName` with a value of `mac`, but the remote end's `platformName` is `windows`, the set of merged capabilities it belongs to would not match. On the other hand, if both were `mac`, we would have a match. The process stops with the first match, which is then returned.
+
 ### Window Handles
 
-[Spec link](https://www.w3.org/TR/webdriver/#dfn-window-handle)
-
-Window Handles are strings representing a browsing context, whether top-level or not. The precise string is up to the remote end to generate, but it must not be the string `current`.
+Window Handles are strings representing a browsing context, whether top-level or not. The precise string is up to the remote end to generate, but it must not be the string `current`. See the [spec](https://www.w3.org/TR/webdriver/#dfn-window-handle) for more details.
 
 ### Handling User Prompts
 
-[Spec link](https://www.w3.org/TR/webdriver/#user-prompts)
+User prompts are alerts, confirmation dialogs, etc..., that block the event loop and require interaction before control is returned to a browsing context. There are 2 ways these can be handled:
+
+* By the Alert commands in the command list above (`Dismiss Alert`, `Accept Alert`, etc...)
+* Automatically, by the remote end, when the user has specified an appropriate value for the `unhandledPromptBehavior` capability. Appropriate values can be one of the two strings `accept` and `dismiss`.
+
+If the `unhandledPromptBehavior` capability is not set, then if a prompt is active, any command except for the Alert commands will result in an `unexpected alert open` error. This error may include a `text` property in the `data` field of the response, set to the text of the active prompt (in order to help with debugging).
+
+If the `unhandledPromptBehavior` capability is set, then at various points in the session, if a prompt blocks the execution of one of the WebDriver algorithms, it will be automatically handled according to the capability:
+	
+* `accept` means to accept all user prompts/alerts
+* `dismiss` means all alerts should be dismissed
+
+See the [section in the spec](https://www.w3.org/TR/webdriver/#user-prompts) for more detailed algorithm.
