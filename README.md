@@ -168,7 +168,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/window/handles|[Get Window Handles](#get-window-handles)|
 |POST|/session/{session id}/frame|[Switch To Frame](#switch-to-frame)|
 |POST|/session/{session id}/frame/parent|[Switch To Parent Frame](#switch-to-parent-frame)|
-|GET|/session/{session id}/window/rect|Get Window Rect|
+|GET|/session/{session id}/window/rect|[Get Window Rect](#get-window-rect)|
 |POST|/session/{session id}/window/rect|Set Window Rect|
 |POST|/session/{session id}/window/maximize|Maximize Window|
 |POST|/session/{session id}/window/minimize|Minimize Window|
@@ -619,6 +619,39 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* Note that no error is returned if the current browsing context has no parent frame; the current context is simply retained
 
 ### Get Window Rect
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/window/rect|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-window-rect):
+> The `Get Window Rect` command returns the size and position on the screen of the operating system window corresponding to the current top-level browsing context.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A JSON representation of a "window rect" object. This has 4 properties:
+		* `x`: the `screenX` attribute of the `window` object
+		* `y`: the `screenY` attribute of the `window` object
+		* `width`: the width of the outer dimensions of the top-level browsing context, including browser chrome etc...
+ 		* `height`: the height of the outer dimensions of the top-level browsing context, including browser chrome etc...
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "x": 0,
+		    "y": 23,
+		    "width": 1280,
+		    "height": 960
+		  }
+		}
+		```
+* **Possible errors:**
+	* None
+
 ### Set Window Rect
 ### Maximize Window
 ### Minimize Window
