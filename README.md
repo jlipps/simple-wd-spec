@@ -166,7 +166,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |DELETE|/session/{session id}/window|[Close Window](#close-window)|
 |POST|/session/{session id}/window|[Switch To Window](#switch-to-window)|
 |GET|/session/{session id}/window/handles|[Get Window Handles](#get-window-handles)|
-|POST|/session/{session id}/frame|Switch To Frame|
+|POST|/session/{session id}/frame|[Switch To Frame](#switch-to-frame)|
 |POST|/session/{session id}/frame/parent|Switch To Parent Frame|
 |GET|/session/{session id}/window/rect|Get Window Rect|
 |POST|/session/{session id}/window/rect|Set Window Rect|
@@ -578,6 +578,27 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* None
 
 ### Switch To Frame
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/frame|
+
+[Spec description](https://www.w3.org/TR/webdriver/#switch-to-frame):
+> The `Switch To Frame` command is used to select the current top-level browsing context or a child browsing context of the current browsing context to use as the current browsing context for subsequent commands.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `id`: one of three possible types:
+		* `null`: this represents the top-level browsing context (i.e., not an iframe)
+		* a Number, representing the index of the `window` object corresponding to a frame
+		* a string representing an element id. The element must be the frame or iframe to be selected
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such frame` (`400`) if a frame could not be found based on the id parameter, or if the element represented by the id parameter is not a frame
+	* `stale element reference` (`400`) if the element found via the id parameter is stale
+
 ### Switch To Parent Frame
 ### Get Window Rect
 ### Set Window Rect
