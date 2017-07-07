@@ -165,7 +165,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/window|[Get Window Handle](#get-window-handle)|
 |DELETE|/session/{session id}/window|[Close Window](#close-window)|
 |POST|/session/{session id}/window|[Switch To Window](#switch-to-window)|
-|GET|/session/{session id}/window/handles|Get Window Handles|
+|GET|/session/{session id}/window/handles|[Get Window Handles](#get-window-handles)|
 |POST|/session/{session id}/frame|Switch To Frame|
 |POST|/session/{session id}/frame/parent|Switch To Parent Frame|
 |GET|/session/{session id}/window/rect|Get Window Rect|
@@ -553,6 +553,30 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* `unsupported operation` (`500`) if a prompt presents changing focus to the new window
 
 ### Get Window Handles
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/window/handles|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-window-handles):
+> The `Get Window Handles` command returns a list of window handles for every open top-level browsing context. The order in which the window handles are returned is arbitrary.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* An array which is a list of [window handles](#window-handles).
+	* Example:
+	
+		```json
+		{
+		  "value": ["handle1", "handle2", "handle3"]
+		}
+		```
+* **Possible errors:**
+	* None
+
 ### Switch To Frame
 ### Switch To Parent Frame
 ### Get Window Rect
