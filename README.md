@@ -167,7 +167,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/window|[Switch To Window](#switch-to-window)|
 |GET|/session/{session id}/window/handles|[Get Window Handles](#get-window-handles)|
 |POST|/session/{session id}/frame|[Switch To Frame](#switch-to-frame)|
-|POST|/session/{session id}/frame/parent|Switch To Parent Frame|
+|POST|/session/{session id}/frame/parent|[Switch To Parent Frame](#switch-to-parent-frame)|
 |GET|/session/{session id}/window/rect|Get Window Rect|
 |POST|/session/{session id}/window/rect|Set Window Rect|
 |POST|/session/{session id}/window/maximize|Maximize Window|
@@ -600,6 +600,24 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* `stale element reference` (`400`) if the element found via the id parameter is stale
 
 ### Switch To Parent Frame
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/frame/parent|
+
+[Spec description](https://www.w3.org/TR/webdriver/#switch-to-parent-frame):
+> The `Switch to Parent Frame` command sets the current browsing context for future commands to the parent of the current browsing context.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the current browsing context is no longer open
+	* Note that no error is returned if the current browsing context has no parent frame; the current context is simply retained
+
 ### Get Window Rect
 ### Set Window Rect
 ### Maximize Window
