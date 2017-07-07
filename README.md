@@ -227,7 +227,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 		
 * **Response properties:**
 	* `sessionId`: a string, the UUID reference of the session, to be used in subsequent requests
-	* `capabilities`: a JSON object, the same object as was sent in via the request
+	* `capabilities`: a JSON object, the set of capabilities that was ultimately merged and matched in the [capability processing algorithm](#processing-capabilities).
 	* Example:
 
 		```json
@@ -624,7 +624,7 @@ During the execution of the [New Session](#new-session) command, the remote end 
 }
 ```
 
-Basically, the remote end validates the `alwaysMatch` set and each set within the `firstMatch` list. Then it merges the `alwaysMatch` set with each of the `firstMatch` sets. Call each result of this process a "merged capabilties" object. The remote end then tries to match each merged capabilities object one-by-one. "Matching" is the process of ensuring that each capability can be unified with the remote end capability. For example, if a merged capability is `platformName` with a value of `mac`, but the remote end's `platformName` is `windows`, the set of merged capabilities it belongs to would not match. On the other hand, if both were `mac`, we would have a match. The process stops with the first match, which is then returned.
+Basically, the remote end validates the `alwaysMatch` set and each set within the `firstMatch` list. Then it merges the `alwaysMatch` set with each of the `firstMatch` sets. Call each result of this process a "merged capabilities" object. (Note that the merge will error out with `invalid argument` if any capability in a `firstMatch` is already present in the `alwaysMatch` set.) The remote end then tries to match each merged capabilities object one-by-one. "Matching" is the process of ensuring that each capability can be unified with the remote end capability. For example, if a merged capability is `platformName` with a value of `mac`, but the remote end's `platformName` is `windows`, the set of merged capabilities it belongs to would not match. On the other hand, if both were `mac`, we would have a match. The process stops with the first match, which is then returned in the `New Session` response.
 
 ### Window Handles
 
