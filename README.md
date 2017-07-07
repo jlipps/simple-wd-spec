@@ -169,7 +169,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/frame|[Switch To Frame](#switch-to-frame)|
 |POST|/session/{session id}/frame/parent|[Switch To Parent Frame](#switch-to-parent-frame)|
 |GET|/session/{session id}/window/rect|[Get Window Rect](#get-window-rect)|
-|POST|/session/{session id}/window/rect|Set Window Rect|
+|POST|/session/{session id}/window/rect|[Set Window Rect](#set-window-rect)|
 |POST|/session/{session id}/window/maximize|Maximize Window|
 |POST|/session/{session id}/window/minimize|Minimize Window|
 |POST|/session/{session id}/window/fullscreen|Fullscreen Window|
@@ -653,6 +653,46 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* None
 
 ### Set Window Rect
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/window/rect|
+
+[Spec description](https://www.w3.org/TR/webdriver/#set-window-rect):
+> The `Set Window Rect` command alters the size and the position of the operating system window corresponding to the current top-level browsing context.
+
+Basically, the command takes a set of JSON parameters corresponding to the window rect object described in the [Get Window Rect](#get-window-rect) command. These parameters are optional. If `x` and `y` are both present, the window is moved to that location. If `width` and `height` are both present, the window (including all external chrome) is resized as close as possible to those dimensions (though not larger than the screen, smaller than the smallest possible window size, etc...).
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `x`: optional integer (-2<sup>63</sup> < _i_ < 2<sup>63</sup> - 1) (defaults to `null`)
+	* `y`: optional integer (-2<sup>63</sup> < _i_ < 2<sup>63</sup> - 1) (defaults to `null`)
+	* `width`: optional integer (0 < _i_ 2<sup>64</sup> - 1) (defaults to `null`)
+	* `height`: optional integer (0 < _i_ 2<sup>64</sup> - 1) (defaults to `null`)
+* **Response value:**
+	* A JSON representation of a "window rect" object based on the new window state:
+		* `x`: the `screenX` attribute of the `window` object
+		* `y`: the `screenY` attribute of the `window` object
+		* `width`: the width of the outer dimensions of the top-level browsing context, including browser chrome etc...
+ 		* `height`: the height of the outer dimensions of the top-level browsing context, including browser chrome etc...
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "x": 10,
+		    "y": 80,
+		    "width": 900,
+		    "height": 500
+		  }
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `unsupported operation` (`500`) if the remote end does not support changing window position / dimension
+	* `invalid argument` (`400`) if the parameters don't conform to the restrictions
+
 ### Maximize Window
 ### Minimize Window
 ### Fullscreen Window
