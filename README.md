@@ -164,7 +164,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/title|[Get Title](#get-title)|
 |GET|/session/{session id}/window|[Get Window Handle](#get-window-handle)|
 |DELETE|/session/{session id}/window|[Close Window](#close-window)|
-|POST|/session/{session id}/window|Switch To Window|
+|POST|/session/{session id}/window|[Switch To Window](#switch-to-window)|
 |GET|/session/{session id}/window/handles|Get Window Handles|
 |POST|/session/{session id}/frame|Switch To Frame|
 |POST|/session/{session id}/frame/parent|Switch To Parent Frame|
@@ -535,7 +535,22 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	
 ### Switch to Window
 
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/window|
 
+[Spec description](https://www.w3.org/TR/webdriver/#switch-to-window):
+> The `Switch To Window` command is used to select the current top-level browsing context for the current session, i.e. the one that will be used for processing commands.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `handle`: a string representing a window handle. Should be one of the strings that was returned in a call to [`Get Window Handles`](#get-window-handles).
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the window handle string is not recognized
+	* `unsupported operation` (`500`) if a prompt presents changing focus to the new window
 
 ### Get Window Handles
 ### Switch To Frame
