@@ -170,7 +170,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/frame/parent|[Switch To Parent Frame](#switch-to-parent-frame)|
 |GET|/session/{session id}/window/rect|[Get Window Rect](#get-window-rect)|
 |POST|/session/{session id}/window/rect|[Set Window Rect](#set-window-rect)|
-|POST|/session/{session id}/window/maximize|Maximize Window|
+|POST|/session/{session id}/window/maximize|[Maximize Window](#maximize-window)|
 |POST|/session/{session id}/window/minimize|Minimize Window|
 |POST|/session/{session id}/window/fullscreen|Fullscreen Window|
 |GET|/session/{session id}/element/active|Get Active Element|
@@ -694,6 +694,40 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `invalid argument` (`400`) if the parameters don't conform to the restrictions
 
 ### Maximize Window
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/window/maximize|
+
+[Spec description](https://www.w3.org/TR/webdriver/#maximize-window):
+> The `Maximize Window` command invokes the window manager-specific "maximize" operation, if any, on the window containing the current top-level browsing context. This typically increases the window to the maximum available size without going full-screen.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A JSON representation of a "window rect" object based on the new window state:
+		* `x`: the `screenX` attribute of the `window` object
+		* `y`: the `screenY` attribute of the `window` object
+		* `width`: the width of the outer dimensions of the top-level browsing context, including browser chrome etc...
+ 		* `height`: the height of the outer dimensions of the top-level browsing context, including browser chrome etc...
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "x": 10,
+		    "y": 80,
+		    "width": 900,
+		    "height": 500
+		  }
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
+
 ### Minimize Window
 ### Fullscreen Window
 ### Get Active Element
