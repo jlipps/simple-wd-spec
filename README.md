@@ -171,7 +171,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/window/rect|[Get Window Rect](#get-window-rect)|
 |POST|/session/{session id}/window/rect|[Set Window Rect](#set-window-rect)|
 |POST|/session/{session id}/window/maximize|[Maximize Window](#maximize-window)|
-|POST|/session/{session id}/window/minimize|Minimize Window|
+|POST|/session/{session id}/window/minimize|[Minimize Window](#minimize-window)|
 |POST|/session/{session id}/window/fullscreen|Fullscreen Window|
 |GET|/session/{session id}/element/active|Get Active Element|
 |POST|/session/{session id}/element|Find Element|
@@ -729,6 +729,41 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Minimize Window
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/window/minimize|
+
+[Spec description](https://www.w3.org/TR/webdriver/#minimize-window):
+> The `Minimize Window` command invokes the window manager-specific “minimize” operation, if any, on the window containing the current top-level browsing context. This typically hides the window in the system tray.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A JSON representation of a "window rect" object of the (new) current top-level browsing context:
+		* `x`: the `screenX` attribute of the `window` object
+		* `y`: the `screenY` attribute of the `window` object
+		* `width`: the width of the outer dimensions of the top-level browsing context, including browser chrome etc...
+ 		* `height`: the height of the outer dimensions of the top-level browsing context, including browser chrome etc...
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "x": 10,
+		    "y": 80,
+		    "width": 900,
+		    "height": 500
+		  }
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
+
+
 ### Fullscreen Window
 ### Get Active Element
 ### Find Element
