@@ -173,11 +173,11 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/window/maximize|[Maximize Window](#maximize-window)|
 |POST|/session/{session id}/window/minimize|[Minimize Window](#minimize-window)|
 |POST|/session/{session id}/window/fullscreen|[Fullscreen Window](#fullscreen-window)|
-|GET|/session/{session id}/element/active|Get Active Element|
-|POST|/session/{session id}/element|Find Element|
+|POST|/session/{session id}/element|[Find Element](#find-element)|
 |POST|/session/{session id}/elements|Find Elements|
 |POST|/session/{session id}/element/{element id}/element|Find Element From Element|
 |POST|/session/{session id}/element/{element id}/elements|Find Elements From Element|
+|GET|/session/{session id}/element/active|Get Active Element|
 |GET|/session/{session id}/element/{element id}/selected|Is Element Selected|
 |GET|/session/{session id}/element/{element id}/attribute/{name}|Get Element Attribute|
 |GET|/session/{session id}/element/{element id}/property/{name}|Get Element Property|
@@ -765,7 +765,6 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 ### Fullscreen Window
 
-
 |HTTP Method|Path Template|
 |-----------|-------------|
 |POST|/session/{session id}/window/fullscreen|
@@ -799,11 +798,44 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
-### Get Active Element
+
 ### Find Element
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/element|
+
+[Spec description](https://www.w3.org/TR/webdriver/#find-element):
+> The `Find Element` command is used to find an element in the current browsing context that can be used for future commands.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `using`: a valid [element location strategy](#location-strategies)
+	* `value`: the actual selector that will be used to find an element
+* **Response value:**
+	* A JSON representation of an element object:
+		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
+	* Note that the property above is not an example, it is literally the sole property of every returned element object
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "element-6066-11e4-a52e-4f735466cecf": "1234-5789-0abc-defg"
+		  }
+		}
+		```
+* **Possible errors:**
+	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such element` (`404`) if the element could not be found after the session implicit wait timeout has elapsed
+	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
+
 ### Find Elements
 ### Find Element From Element
 ### Find Elements From Element
+### Get Active Element
 ### Is Element Selected
 ### Get Element Attribute
 ### Get Element Property
@@ -899,3 +931,17 @@ If the `unhandledPromptBehavior` capability is set, then at various points in th
 * `dismiss` means all alerts should be dismissed
 
 See the [section in the spec](https://www.w3.org/TR/webdriver/#user-prompts) for more detailed algorithm.
+
+### Location Strategies
+
+[Location strategies](https://w3c.github.io/webdriver/webdriver-spec.html#locator-strategies) are used in conjunction with the [Find Element](#find-element) series of commands. They instruct the remote end which method to use to find an element using the provided locator. The valid locator strategies are:
+
+|Strategy|Keyword|
+|--------|-------|
+|CSS selector|`css selector`|
+|Link text selector|`link text`|
+|Partial link text selector|`partial link text`|
+|Tag name|`tag name`|
+|XPath selector|`xpath`|
+
+
