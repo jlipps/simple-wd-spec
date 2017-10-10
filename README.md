@@ -174,7 +174,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/window/minimize|[Minimize Window](#minimize-window)|
 |POST|/session/{session id}/window/fullscreen|[Fullscreen Window](#fullscreen-window)|
 |POST|/session/{session id}/element|[Find Element](#find-element)|
-|POST|/session/{session id}/elements|Find Elements|
+|POST|/session/{session id}/elements|[Find Elements](#find-elements)|
 |POST|/session/{session id}/element/{element id}/element|Find Element From Element|
 |POST|/session/{session id}/element/{element id}/elements|Find Elements From Element|
 |GET|/session/{session id}/element/active|Get Active Element|
@@ -833,6 +833,37 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Find Elements
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/elements|
+
+[Spec description](https://www.w3.org/TR/webdriver/#find-elements):
+> The `Find Elements` command is used to find elements in the current browsing context that can be used for future commands.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `using`: a valid [element location strategy](#location-strategies)
+	* `value`: the actual selector that will be used to find an element
+* **Response value:**
+	* A (possibly empty) JSON list of representations of an element object. Each representation is itself a JSON object with the following property:
+		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
+	* Example:
+	
+		```json
+		{
+		  "value": [
+		      {"element-6066-11e4-a52e-4f735466cecf": "1234-5789-0abc-defg"},
+		      {"element-6066-11e4-a52e-4f735466cecf": "5678-1234-defg-0abc"}
+  		  ]
+		}
+		```
+* **Possible errors:**
+	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
+
 ### Find Element From Element
 ### Find Elements From Element
 ### Get Active Element
