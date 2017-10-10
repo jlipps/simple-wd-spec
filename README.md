@@ -179,8 +179,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/element/{element id}/elements|[Find Elements From Element](#find-elements-from-element)|
 |GET|/session/{session id}/element/active|[Get Active Element](#get-active-element)|
 |GET|/session/{session id}/element/{element id}/selected|[Is Element Selected](#is-element-selected)|
-|GET|/session/{session id}/element/{element id}/attribute/{name}|Get Element Attribute|
-|GET|/session/{session id}/element/{element id}/property/{name}|Get Element Property|
+|GET|/session/{session id}/element/{element id}/attribute/{name}|[Get Element Attribute](#get-element-attribute)|
+|GET|/session/{session id}/element/{element id}/property/{name}|[Get Element Property](#get-element-property)|
 |GET|/session/{session id}/element/{element id}/css/{property name}|Get Element CSS Value|
 |GET|/session/{session id}/element/{element id}/text|Get Element Text|
 |GET|/session/{session id}/element/{element id}/name|Get Element Tag Name|
@@ -894,6 +894,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `no such element` (`404`) if the element could not be found after the session implicit wait timeout has elapsed
+	* `stale element reference` (`404`) if the element is stale
 
 ### Find Elements From Element
 
@@ -926,6 +927,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Possible errors:**
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the root element is stale
 
 ### Get Active Element
 
@@ -983,9 +985,65 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 		```
 * **Possible errors:**
 	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
 
 ### Get Element Attribute
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/attribute/{name}|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-attribute):
+> The `Get Element Attribute` command will return the attribute of a web element.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The named attribute of the element. There are three possibilities
+		* If the element has a named attribute with a value, this is returned
+		* If the element has a boolean attribute, the string (not boolean) `true` is returned
+		* If the element does not have the attribute, `null` is returned
+	* Example:
+	
+		```json
+		{
+		  "value": "checkbox"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Get Element Property
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/property/{name}|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-property):
+> The `Get Element Property` command will return the result of getting a property of an element.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The named property of the element, accessed by calling [GetOwnProperty](http://www.ecma-international.org/ecma-262/5.1/#sec-8.12.1) on the element object. If the property is undefined, `null` is returned.
+	* Example:
+	
+		```json
+		{
+		  "value": "foo"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Get Element CSS Value
 ### Get Element Text
 ### Get Element Tag Name
