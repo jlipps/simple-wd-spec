@@ -177,7 +177,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/elements|[Find Elements](#find-elements)|
 |POST|/session/{session id}/element/{element id}/element|[Find Element From Element](#find-element-from-element)|
 |POST|/session/{session id}/element/{element id}/elements|[Find Elements From Element](#find-elements-from-element)|
-|GET|/session/{session id}/element/active|Get Active Element|
+|GET|/session/{session id}/element/active|[Get Active Element](#get-active-element)|
 |GET|/session/{session id}/element/{element id}/selected|Is Element Selected|
 |GET|/session/{session id}/element/{element id}/attribute/{name}|Get Element Attribute|
 |GET|/session/{session id}/element/{element id}/property/{name}|Get Element Property|
@@ -830,7 +830,6 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `no such element` (`404`) if the element could not be found after the session implicit wait timeout has elapsed
-	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Find Elements
 
@@ -862,7 +861,6 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Possible errors:**
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
-	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Find Element From Element
 
@@ -896,7 +894,6 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `no such element` (`404`) if the element could not be found after the session implicit wait timeout has elapsed
-	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Find Elements From Element
 
@@ -929,9 +926,36 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Possible errors:**
 	* `invalid argument` (`400`) if the location strategy is invalid or if the selector is undefined
 	* `no such window` (`400`) if the top level browsing context is not open
-	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
 
 ### Get Active Element
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/element/active|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-active-element):
+> `Get Active Element` returns the active element of the current browsing context’s document element.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A JSON representation of the active element:
+		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
+	* Note that the property above is not an example, it is literally the sole property of every returned element object
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "element-6066-11e4-a52e-4f735466cecf": "1234-5789-0abc-defg"
+		  }
+		}
+		```
+* **Possible errors:**
+	* None
+
 ### Is Element Selected
 ### Get Element Attribute
 ### Get Element Property
