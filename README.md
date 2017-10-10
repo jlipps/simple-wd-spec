@@ -178,7 +178,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/element/{element id}/element|[Find Element From Element](#find-element-from-element)|
 |POST|/session/{session id}/element/{element id}/elements|[Find Elements From Element](#find-elements-from-element)|
 |GET|/session/{session id}/element/active|[Get Active Element](#get-active-element)|
-|GET|/session/{session id}/element/{element id}/selected|Is Element Selected|
+|GET|/session/{session id}/element/{element id}/selected|[Is Element Selected](#is-element-selected)|
 |GET|/session/{session id}/element/{element id}/attribute/{name}|Get Element Attribute|
 |GET|/session/{session id}/element/{element id}/property/{name}|Get Element Property|
 |GET|/session/{session id}/element/{element id}/css/{property name}|Get Element CSS Value|
@@ -931,7 +931,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 |HTTP Method|Path Template|
 |-----------|-------------|
-|POST|/session/{session id}/element/active|
+|GET|/session/{session id}/element/active|
 
 [Spec description](https://www.w3.org/TR/webdriver/#get-active-element):
 > `Get Active Element` returns the active element of the current browsing context’s document element.
@@ -954,9 +954,36 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 		}
 		```
 * **Possible errors:**
-	* None
+	* `no such window` (`400`) if the top level browsing context is not open
 
 ### Is Element Selected
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/selected|
+
+[Spec description](https://www.w3.org/TR/webdriver/#is-element-selected):
+> `Is Element Selected` determines if the referenced element is selected or not. This operation only makes sense on input elements of the Checkbox- and Radio Button states, or option elements.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `true` or `false` based on the selected state
+		* If the element is a checkbox or radio button, this return value will be its "checkedness"
+		* If the element is an option element, this return value will be its "selectedness"
+	* Example:
+	
+		```json
+		{
+		  "value": true
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Get Element Attribute
 ### Get Element Property
 ### Get Element CSS Value
