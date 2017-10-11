@@ -186,9 +186,9 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/element/{element id}/name|[Get Element Tag Name](#get-element-tag-name)|
 |GET|/session/{session id}/element/{element id}/rect|[Get Element Rect](#get-element-rect)|
 |GET|/session/{session id}/element/{element id}/enabled|[Is Element Enabled](#is-element-enabled)|
-|POST|/session/{session id}/element/{element id}/click|Element Click|
-|POST|/session/{session id}/element/{element id}/clear|Element Clear|
-|POST|/session/{session id}/element/{element id}/value|Element Send Keys|
+|POST|/session/{session id}/element/{element id}/click|[Element Click](#element-click)|
+|POST|/session/{session id}/element/{element id}/clear|[Element Clear](#element-clear)|
+|POST|/session/{session id}/element/{element id}/value|[Element Send Keys](#element-send-keys)|
 |GET|/session/{session id}/source|Get Page Source|
 |POST|/session/{session id}/execute/sync|Execute Script|
 |POST|/session/{session id}/execute/async|Execute Async Script|
@@ -1190,8 +1190,102 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `stale element reference` (`404`) if the element is stale
 
 ### Element Click
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/element/{element id}/click|
+
+[Spec description](https://www.w3.org/TR/webdriver/#element-click):
+> The `Element Click` command scrolls into view the element if it is not already pointer-interactable, and clicks its in-view center point. If the element's center point is obscured by another element, an `element click intercepted` error is returned. If the element is outside the viewport, an `element not interactable` error is returned.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+	* Example:
+	
+		```json
+		{
+		  "value": null
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+	* `invalid argument` (`400`) if the element is an input element in the file upload state
+	* `element not interactable` (`400`) if the element is not in view even after an attempt was made to scroll it into view
+	* `element click intercepted` (`400`) if the element was obscured by another element
+	* `timeout` (`408`) if post-click navigation did not happen within the page load timeout
+	* `unknown error` (`500`) if post-click navigation failed due to a network error
+	* `insecure certificate` (`400`) if post-click navigation was blocked by a content security policy
+
 ### Element Clear
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/element/{element id}/clear|
+
+[Spec description](https://www.w3.org/TR/webdriver/#element-clear):
+> The `Element Clear` command scrolls into view an editable or resettable element and then attempts to clear its selected files or text content.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+	* Example:
+	
+		```json
+		{
+		  "value": null
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+	* `invalid element state` (`400`) if the element is (a) neither content editable nor both editable and resettable, or (b) disabled, read-only, or has pointer events disabled
+	* `element not interactable` (`400`) if the element does not become interactable after the implicit wait timeout
+
 ### Element Send Keys
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/element/{element id}/value|
+
+[Spec description](https://www.w3.org/TR/webdriver/#element-send-keys):
+> The `Element Send Keys` command scrolls into view the form control element and then sends the provided keys to the element. In case the element is not keyboard-interactable, an element not interactable error is returned.
+>
+> The key input state used for input may be cleared mid-way through "typing" by sending the null key, which is U+E000 (NULL).
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* `text`: string to send as keystrokes to the element. There are three basic possibilities for what happens with this:
+		* If the element is a text input box: `text` is typed as an appendix to existing text.
+		* If the element is a file input control: `text` is split on newlines (`\n`) and considered a list of files to select. The files must actually exist.
+		* If the element is rendered as something other than a text input control: `text` is set as the `value` property of the control.
+* **Response value:**
+	* `null`
+	* Example:
+	
+		```json
+		{
+		  "value": null
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+	* `invalid argument` (`400`) if the `text` request parameter is not a string, or if the element is a file input and actual files are not sent, or if the element is has a non-standard UI and is suffering from bad input after being set
+	* `invalid element state` (`400`) if the element is (a) neither content editable nor both editable and resettable, or (b) disabled, read-only, or has pointer events disabled
+	* `element not interactable` (`400`) if the element does not become keyboard-interactable after the implicit wait timeout, or if the element has a non-standard UI and no `value` property to set
+
 ### Get Page Source
 ### Execute Script
 ### Execute Async Script
