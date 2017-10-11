@@ -190,7 +190,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/element/{element id}/clear|[Element Clear](#element-clear)|
 |POST|/session/{session id}/element/{element id}/value|[Element Send Keys](#element-send-keys)|
 |GET|/session/{session id}/source|[Get Page Source](#get-page-source)|
-|POST|/session/{session id}/execute/sync|Execute Script|
+|POST|/session/{session id}/execute/sync|[Execute Script](#execute-script)|
 |POST|/session/{session id}/execute/async|Execute Async Script|
 |GET|/session/{session id}/cookie|Get All Cookies|
 |GET|/session/{session id}/cookie/{name}|Get Named Cookie|
@@ -1312,6 +1312,87 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `no such window` (`400`) if the top level browsing context is not open
 
 ### Execute Script
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/execute/sync|
+
+[Spec description](https://www.w3.org/TR/webdriver/#execute-script):
+> The `Execute Script` command executes a JavaScript function in the context of the current browsing context and returns the return value of the function.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `script`: A string, the Javascript function body you want executed. Note that this is the function _body_, not a function _definition_. What happens is that `script` is parsed as a JS function body, and if this parsing succeeds, an internal function is created with this body. The function is then `call`ed with `window` as the context, and any arguments you provided applied as well (see next parameter). This whole process is wrapped in `Promise.resolve`, so if your script returns a Promise, its fulfillment (or rejection) will propagate to the return value of this command. If you want a return value of your script to be passed to the local end, you'll need to explicitly `return` in your script.
+	* `args`: An array of JSON values which will be deserialized and passed as arguments to your function (accessible via the JS `arguments` object. Note that WebDriver element references may be passed in their object form, and they will be deserialized to actual web elements in your function.
+	* Example 1:
+
+		```json
+		{
+		  "parameters": {
+		    "script": "return arguments[0] + arguments[1];",
+		    "args": [5, 6]
+		  }
+		}
+		```
+	
+	* Example 2:
+
+		```json
+		{
+		  "parameters": {
+		    "script": "let arg = arguments[0]; return new Promise((resolve, reject) => { window.setTimeout(() => { resolve('hello ' + arg); }, 1000); });",
+		    "args": ["world"]
+		  }
+		}
+		```
+		
+	* Example 3:
+
+		```json
+		{
+		  "parameters": {
+		    "script": "throw new Error('boo');",
+		    "args": []
+		  }
+		}
+		```
+		
+* **Response value:**
+	* Either the return value of your script, the fulfillment of the Promise returned by your script, or the error which was the reason for your script's returned Promise's rejection.
+	* Example 1:
+	
+		```json
+		{
+		  "value": 11
+		}
+		```
+		
+	* Example 2:
+	
+		```json
+		{
+		  "value": "hello world"
+		}
+		```
+		
+	* Example 3:
+	
+		```json
+		{
+		  "value": {
+		    "error": "boo",
+		    "message": "boo",
+		    "stacktrace": "at <anonymous:1:11>"
+		  }
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `javascript error` (`500`) if `script` could not be parsed as a function body, or if the function completes abruptly, or if the script results in a Promise rejected with any reason other than an error
+	* `timeout` (`408`) if the script does not generate a return value or completed Promise by the time the `session script timeout` elapses
+
 ### Execute Async Script
 ### Get All Cookies
 ### Get Named Cookie
