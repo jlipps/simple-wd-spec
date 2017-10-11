@@ -181,11 +181,11 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/element/{element id}/selected|[Is Element Selected](#is-element-selected)|
 |GET|/session/{session id}/element/{element id}/attribute/{name}|[Get Element Attribute](#get-element-attribute)|
 |GET|/session/{session id}/element/{element id}/property/{name}|[Get Element Property](#get-element-property)|
-|GET|/session/{session id}/element/{element id}/css/{property name}|Get Element CSS Value|
-|GET|/session/{session id}/element/{element id}/text|Get Element Text|
-|GET|/session/{session id}/element/{element id}/name|Get Element Tag Name|
-|GET|/session/{session id}/element/{element id}/rect|Get Element Rect|
-|GET|/session/{session id}/element/{element id}/enabled|Is Element Enabled|
+|GET|/session/{session id}/element/{element id}/css/{property name}|[Get Element CSS Value](#get-element-css-value)|
+|GET|/session/{session id}/element/{element id}/text|[Get Element Text](#get-element-text)|
+|GET|/session/{session id}/element/{element id}/name|[Get Element Tag Name](#get-element-tag-name)|
+|GET|/session/{session id}/element/{element id}/rect|[Get Element Rect](#get-element-rect)|
+|GET|/session/{session id}/element/{element id}/enabled|[Is Element Enabled](#is-element-enabled)|
 |POST|/session/{session id}/element/{element id}/click|Element Click|
 |POST|/session/{session id}/element/{element id}/clear|Element Clear|
 |POST|/session/{session id}/element/{element id}/value|Element Send Keys|
@@ -1045,10 +1045,150 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `stale element reference` (`404`) if the element is stale
 
 ### Get Element CSS Value
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/css/{property name}|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-css-value):
+> The `Get Element CSS Value` command retrieves the computed value of the given CSS property of the given web element.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The computed value of the parameter corresponding to `property name` from the element's style declarations (unless the document type is `xml`, in which case the return value is simply the empty string)
+	* Example:
+	
+		```json
+		{
+		  "value": "15px"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Get Element Text
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/text|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-text):
+> The `Get Element Text` command intends to return an element’s text "as rendered". An element's rendered text is also used for locating `a` elements by their link text and partial link text.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The visible text of the element (including child elements), following the algorithm defined in the Selenium Atoms for [`bot.dom.getVisibleText`](https://github.com/SeleniumHQ/selenium/blob/e09e28f016c9f53196cf68d6f71991c5af4a35d4/javascript/atoms/dom.js#L981)
+	* Example:
+	
+		```json
+		{
+		  "value": "Hello world"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Get Element Tag Name
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/name|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-tag-name):
+> The `Get Element Tag Name` command returns the qualified element name of the given web element.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The `tagName` attribute of the element
+	* Example:
+	
+		```json
+		{
+		  "value": "INPUT"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Get Element Rect
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/rect|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-element-rect):
+> The `Get Element Rect` command returns the dimensions and coordinates of the given web element.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A JSON object representing the position and bounding rect of the element (all in CSS reference pixels):
+		* `x`: the absolute x-coordinate of the element, relative to the document (not the screen)
+		* `y`: the absolute y-coordinate of the element, relative to the document (not the screen)
+		* `width`: the width of the bounding rectangle for the element
+		* `height`: the height of the bounding rectangle for the element
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "x": 200,
+		    "y": 300,
+		    "width": 20,
+		    "height": 50,
+		  }
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Is Element Enabled
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/enabled|
+
+[Spec description](https://www.w3.org/TR/webdriver/#is-element-enabled):
+> `Is Element Enabled` determines if the referenced element is enabled or not. This operation only makes sense on form controls.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of an element returned in a previous call to Find Element(s)
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* If the element is in an xml document, or is a disabled form control: bolean `false`
+	* Otherwise, boolean `true`
+	* Example:
+	
+		```json
+		{
+		  "value": true
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+
 ### Element Click
 ### Element Clear
 ### Element Send Keys
