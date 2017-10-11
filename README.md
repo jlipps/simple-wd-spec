@@ -189,7 +189,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/element/{element id}/click|[Element Click](#element-click)|
 |POST|/session/{session id}/element/{element id}/clear|[Element Clear](#element-clear)|
 |POST|/session/{session id}/element/{element id}/value|[Element Send Keys](#element-send-keys)|
-|GET|/session/{session id}/source|Get Page Source|
+|GET|/session/{session id}/source|[Get Page Source](#get-page-source)|
 |POST|/session/{session id}/execute/sync|Execute Script|
 |POST|/session/{session id}/execute/async|Execute Async Script|
 |GET|/session/{session id}/cookie|Get All Cookies|
@@ -1287,6 +1287,30 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `element not interactable` (`400`) if the element does not become keyboard-interactable after the implicit wait timeout, or if the element has a non-standard UI and no `value` property to set
 
 ### Get Page Source
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/source|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-page-source):
+> The `Get Page Source` command returns a string serialization of the DOM of the current browsing context active document.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The serialized document source
+	* Example:
+	
+		```json
+		{
+		  "value": "<html>...</html>"
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Execute Script
 ### Execute Async Script
 ### Get All Cookies
