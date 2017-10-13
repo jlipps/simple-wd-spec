@@ -191,7 +191,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/element/{element id}/value|[Element Send Keys](#element-send-keys)|
 |GET|/session/{session id}/source|[Get Page Source](#get-page-source)|
 |POST|/session/{session id}/execute/sync|[Execute Script](#execute-script)|
-|POST|/session/{session id}/execute/async|Execute Async Script|
+|POST|/session/{session id}/execute/async|[Execute Async Script](#execute-async-script)|
 |GET|/session/{session id}/cookie|Get All Cookies|
 |GET|/session/{session id}/cookie/{name}|Get Named Cookie|
 |POST|/session/{session id}/cookie|Add Cookie|
@@ -1324,13 +1324,13 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `session id`
 * **Request parameters:** 
 	* `script`: A string, the Javascript function body you want executed. Note that this is the function _body_, not a function _definition_. What happens is that `script` is parsed as a JS function body, and if this parsing succeeds, an internal function is created with this body. The function is then `call`ed with `window` as the context, and any arguments you provided applied as well (see next parameter). This whole process is wrapped in `Promise.resolve`, so if your script returns a Promise, its fulfillment (or rejection) will propagate to the return value of this command. If you want a return value of your script to be passed to the local end, you'll need to explicitly `return` in your script.
-	* `args`: An array of JSON values which will be deserialized and passed as arguments to your function (accessible via the JS `arguments` object. Note that WebDriver element references may be passed in their object form, and they will be deserialized to actual web elements in your function.
+	* `args`: An array of JSON values which will be deserialized and passed as arguments to your function (accessible via the JS `arguments` array). Note that WebDriver element references may be passed in their object form, and they will be deserialized to actual web elements in your function.
 	* Example 1:
 
 		```json
 		{
 		  "parameters": {
-		    "script": "return arguments[0] + arguments[1];",
+		    "script": "let [num1, num2] = arguments; return num1 + num2;",
 		    "args": [5, 6]
 		  }
 		}
@@ -1341,7 +1341,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 		```json
 		{
 		  "parameters": {
-		    "script": "let arg = arguments[0]; return new Promise((resolve, reject) => { window.setTimeout(() => { resolve('hello ' + arg); }, 1000); });",
+		    "script": "let name = arguments[0]; return new Promise((resolve, reject) => { window.setTimeout(() => { resolve('hello ' + name); }, 1000); });",
 		    "args": ["world"]
 		  }
 		}
@@ -1394,6 +1394,76 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `timeout` (`408`) if the script does not generate a return value or completed Promise by the time the `session script timeout` elapses
 
 ### Execute Async Script
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/execute/async|
+
+[Spec description](https://www.w3.org/TR/webdriver/#execute-async-script):
+> The `Execute Async Script` command causes JavaScript to execute as an anonymous function. Unlike the Execute Script command, the result of the function is ignored. Instead an additional argument is provided as the final argument to the function. This is a function that, when called, returns its first argument as the response.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `script`: A string, the Javascript function body you want executed. Note that this is the function _body_, not a function _definition_. What happens is that `script` is parsed as a JS function body, and if this parsing succeeds, an internal function is created with this body. The function is then `call`ed with `window` as the context, and any arguments you provided applied as well (see next parameter). In addition, a callback function reference is appended to the list of arguments, available as the last item in the `arguments` list. When this function is called in your script, the first parameter to it is returned as the result of this command.
+	* `args`: An array of JSON values which will be deserialized and passed as arguments to your function (accessible via the JS `arguments` array). Note that WebDriver element references may be passed in their object form, and they will be deserialized to actual web elements in your function.
+	* Example 1:
+
+		```json
+		{
+		  "parameters": {
+		    "script": "let [num1, num2, cb] = arguments; cb(num1 + num2);",
+		    "args": [5, 6]
+		  }
+		}
+		```
+	
+	* Example 2:
+
+		```json
+		{
+		  "parameters": {
+		    "script": "let [name, cb] = arguments; window.setTimeout(() => { cb('hello ' + name); }, 1000);",
+		    "args": ["world"]
+		  }
+		}
+		```
+		
+* **Response value:**
+	* The JSON serialization of the value of the first parameter sent to the callback function, or any error triggered during execution
+	* Example 1:
+	
+		```json
+		{
+		  "value": 11
+		}
+		```
+		
+	* Example 2:
+	
+		```json
+		{
+		  "value": "hello world"
+		}
+		```
+		
+	* Example 3:
+	
+		```json
+		{
+		  "value": {
+		    "error": "boo",
+		    "message": "boo",
+		    "stacktrace": "at <anonymous:1:11>"
+		  }
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `javascript error` (`500`) if `script` could not be parsed as a function body, or if the function completes abruptly, or if the script results in a Promise rejected with any reason other than an error
+	* `timeout` (`408`) if the script does not generate a return value or completed Promise by the time the `session script timeout` elapses
+
 ### Get All Cookies
 ### Get Named Cookie
 ### Add Cookie
