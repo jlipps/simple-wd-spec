@@ -192,11 +192,11 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |GET|/session/{session id}/source|[Get Page Source](#get-page-source)|
 |POST|/session/{session id}/execute/sync|[Execute Script](#execute-script)|
 |POST|/session/{session id}/execute/async|[Execute Async Script](#execute-async-script)|
-|GET|/session/{session id}/cookie|Get All Cookies|
-|GET|/session/{session id}/cookie/{name}|Get Named Cookie|
-|POST|/session/{session id}/cookie|Add Cookie|
-|DELETE|/session/{session id}/cookie/{name}|Delete Cookie|
-|DELETE|/session/{session id)/cookie|Delete All Cookies|
+|GET|/session/{session id}/cookie|[Get All Cookies](#get-all-cookies)|
+|GET|/session/{session id}/cookie/{name}|[Get Named Cookie](#get-named-cookie)|
+|POST|/session/{session id}/cookie|[Add Cookie](#add-cookie)|
+|DELETE|/session/{session id}/cookie/{name}|[Delete Cookie](#delete-cookie)|
+|DELETE|/session/{session id)/cookie|[Delete All Cookies](#delete-all-cookies)|
 |POST|/session/{session id}/actions|Perform Actions|
 |DELETE|/session/{session id}/actions|Release Actions|
 |POST|/session/{session id}/alert/dismiss|Dismiss Alert|
@@ -1465,10 +1465,136 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `timeout` (`408`) if the script does not generate a return value or completed Promise by the time the `session script timeout` elapses
 
 ### Get All Cookies
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/cookie|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-all-cookies):
+> The `Get All Cookies` command returns all cookies associated with the address of the current browsing context’s active document.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A list of serialized cookies. Each serialized cookie has a number of optional fields which may or may not be returned in addition to `name` and `value`.
+	* Example:
+	
+		```json
+		{
+		  "value": [
+		    {"name": "cookie1", "value": "hello"},
+		    {"name": "cookie2", "value": "goodbye"}
+		  ]
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Get Named Cookie
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/cookie/{name}|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-named-cookie):
+> The `Get Named Cookie` command returns the cookie with the requested name from the associated cookies in the cookie store of the current browsing context's active document. If no cookie is found, a no such cookie error is returned.
+
+* **URL variables:**
+	* `session id`
+	* `name`: Name of the cookie to retrieve
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* A serialized cookie, with `name` and `value` fields. There are a number of optional fields like `path`, `domain`, and `expiry-time` which may also be present.
+	* Example:
+	
+		```json
+		{
+		  "value": {
+		    "name": "cookie1",
+		    "value": "hello"
+		  }
+		}
+		```
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such cookie` (`404`) if no cookie exists for the given name
+
 ### Add Cookie
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/cookie|
+
+[Spec description](https://www.w3.org/TR/webdriver/#add-cookie):
+> The `Add Cookie` command adds a single cookie to the cookie store associated with the active document's address.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `cookie`: A JSON object representing a cookie. It must have at least the `name` and `value` fields and could have more, including `expiry-time` and so on ([see full list](https://w3c.github.io/webdriver/webdriver-spec.html#dfn-table-for-cookie-conversion)).
+	* Example :
+
+		```json
+		{
+		  "parameters": {
+		    "cookie": {
+		      "name": "mycookie",
+		      "value": "hi",
+		      "path": "/",
+		      "domain": "foo.com"
+		    }
+		  }
+		}
+		```
+	
+* **Response value:**
+	* `null`
+	
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `invalid argument` (`400`) if the cookie is missing a required field (`name` and `value`), or if the cookie's domain does not match the browsing context's domain, or invalid data is sent for one of the optional fields
+	* `unable to set cookie` (`500`) if some error occurred and the cookie could not be set
+
 ### Delete Cookie
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|DELETE|/session/{session id}/cookie/{name}|
+
+[Spec description](https://www.w3.org/TR/webdriver/#delete-cookie):
+> The `Delete Cookie` command allows you to delete either a single cookie by parameter name, or all the cookies associated with the active document's address if name is undefined.
+
+* **URL variables:**
+	* `session id`
+	* `name`: the name of the cookie, or undefined
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Delete All Cookies
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|DELETE|/session/{session id}/cookie|
+
+[Spec description](https://www.w3.org/TR/webdriver/#delete-all-cookies):
+> The `Delete All Cookies` command allows deletion of all cookies associated with the active document's address.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Perform Actions
 ### Release Actions
 ### Dismiss Alert
