@@ -353,6 +353,16 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `script`: integer in ms for session script timeout
 	* `pageLoad`: integer in ms for session page load timeout
 	* `implicit`: integer in ms for session implicit wait timeout
+	* Example:
+		
+		```json
+		{
+		  "script": 1000,
+		  "pageLoad": 7000,
+		  "implicit": 5000
+		}
+		```
+		
 * **Response value:**
 	* `null`		
 * **Possible errors:**
@@ -371,6 +381,14 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 	* `session id`
 * **Request parameters:** 
 	* `url`: string representing an absolute URL (beginning with `http(s)`), possibly including a fragment (`#...`). Could also be a local scheme (`about:` etc).
+	* Example:
+	
+	```json
+	{
+	  "url": "https://jlipps.com"
+	}
+	```
+	
 * **Response value:**
 	* `null`
 * **Possible errors:**
@@ -546,6 +564,12 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* `session id`
 * **Request parameters:** 
 	* `handle`: a string representing a window handle. Should be one of the strings that was returned in a call to [`Get Window Handles`](#get-window-handles).
+	* Example:
+	
+	```json
+	{"handle": "asdf-1234-jklo-5678"}
+	```
+	
 * **Response value:**
 	* `null`
 * **Possible errors:**
@@ -593,6 +617,12 @@ The `Close Window` command closes the current top-level browsing context. Once d
 		* `null`: this represents the top-level browsing context (i.e., not an iframe)
 		* a Number, representing the index of the `window` object corresponding to a frame
 		* a string representing an element id. The element must be the frame or iframe to be selected
+	* Example:
+	
+		```json
+		{"id": 2}
+		```
+		
 * **Response value:**
 	* `null`
 * **Possible errors:**
@@ -670,6 +700,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `y`: optional integer (-2<sup>63</sup> < _i_ < 2<sup>63</sup> - 1) (defaults to `null`)
 	* `width`: optional integer (0 < _i_ 2<sup>64</sup> - 1) (defaults to `null`)
 	* `height`: optional integer (0 < _i_ 2<sup>64</sup> - 1) (defaults to `null`)
+	* Example:
+	
+		```json
+		{"x": 100, "y": 100, "width": 200, "height": 400}
+		```
+		
 * **Response value:**
 	* A JSON representation of a "window rect" object based on the new window state:
 		* `x`: the `screenX` attribute of the `window` object
@@ -813,6 +849,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Request parameters:** 
 	* `using`: a valid [element location strategy](#location-strategies)
 	* `value`: the actual selector that will be used to find an element
+	* Example:
+	
+		```json
+		{"using": "css selector", "selector": "#foo"}
+		```
+		
 * **Response value:**
 	* A JSON representation of an element object:
 		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
@@ -845,6 +887,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Request parameters:** 
 	* `using`: a valid [element location strategy](#location-strategies)
 	* `value`: the actual selector that will be used to find an element
+	* Example:
+	
+		```json
+		{"using": "css selector", "selector": "#foo"}
+		```
+		
 * **Response value:**
 	* A (possibly empty) JSON list of representations of an element object. Each representation is itself a JSON object with the following property:
 		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
@@ -877,6 +925,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Request parameters:** 
 	* `using`: a valid [element location strategy](#location-strategies)
 	* `value`: the actual selector that will be used to find an element
+	* Example:
+	
+		```json
+		{"using": "css selector", "selector": "#foo"}
+		```
+		
 * **Response value:**
 	* A JSON representation of an element object:
 		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
@@ -911,6 +965,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Request parameters:** 
 	* `using`: a valid [element location strategy](#location-strategies)
 	* `value`: the actual selector that will be used to find an element
+	* Example:
+	
+		```json
+		{"using": "css selector", "selector": "#foo"}
+		```
+		
 * **Response value:**
 	* A (possibly empty) JSON list of representations of an element object. Each representation is itself a JSON object with the following property:
 		* `element-6066-11e4-a52e-4f735466cecf`: a string UUID representing the found element
@@ -1270,6 +1330,12 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 		* If the element is a text input box: `text` is typed as an appendix to existing text.
 		* If the element is a file input control: `text` is split on newlines (`\n`) and considered a list of files to select. The files must actually exist.
 		* If the element is rendered as something other than a text input control: `text` is set as the `value` property of the control.
+	* Example:
+	
+		```json
+		{"text": "hello world"}
+		```
+		
 * **Response value:**
 	* `null`
 	* Example:
@@ -1329,10 +1395,8 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "script": "let [num1, num2] = arguments; return num1 + num2;",
-		    "args": [5, 6]
-		  }
+		  "script": "let [num1, num2] = arguments; return num1 + num2;",
+		  "args": [5, 6]
 		}
 		```
 	
@@ -1340,10 +1404,8 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "script": "let name = arguments[0]; return new Promise((resolve, reject) => { window.setTimeout(() => { resolve('hello ' + name); }, 1000); });",
-		    "args": ["world"]
-		  }
+		  "script": "let name = arguments[0]; return new Promise((resolve, reject) => { window.setTimeout(() => { resolve('hello ' + name); }, 1000); });",
+		  "args": ["world"]
 		}
 		```
 		
@@ -1351,10 +1413,8 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "script": "throw new Error('boo');",
-		    "args": []
-		  }
+		  "script": "throw new Error('boo');",
+		  "args": []
 		}
 		```
 		
@@ -1411,10 +1471,8 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "script": "let [num1, num2, cb] = arguments; cb(num1 + num2);",
-		    "args": [5, 6]
-		  }
+		  "script": "let [num1, num2, cb] = arguments; cb(num1 + num2);",
+		  "args": [5, 6]
 		}
 		```
 	
@@ -1422,10 +1480,8 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "script": "let [name, cb] = arguments; window.setTimeout(() => { cb('hello ' + name); }, 1000);",
-		    "args": ["world"]
-		  }
+		  "script": "let [name, cb] = arguments; window.setTimeout(() => { cb('hello ' + name); }, 1000);",
+		  "args": ["world"]
 		}
 		```
 		
@@ -1539,13 +1595,11 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 
 		```json
 		{
-		  "parameters": {
-		    "cookie": {
-		      "name": "mycookie",
-		      "value": "hi",
-		      "path": "/",
-		      "domain": "foo.com"
-		    }
+		  "cookie": {
+		    "name": "mycookie",
+		    "value": "hi",
+		    "path": "/",
+		    "domain": "foo.com"
 		  }
 		}
 		```
@@ -1655,33 +1709,31 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	
 		```json
 		{
-		  "parameters": {
-		    "actions": [
-		      {
-		        "type": "pointer",
-		        "id": "finger1",
-		        "parameters": {"pointerType": "touch"},
-		        "actions": [
-		          {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
-		          {"type": "pointerDown", "button": 0},
-		          {"type": "pause", "duration": 500},
-		          {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": -50, "y": 0},
-		          {"type": "pointerUp", "button": 0}
-		        ]
-		      }, {
-		        "type": "pointer",
-		        "id": "finger2",
-		        "parameters": {"pointerType": "touch"},
-		        "actions": [
-		          {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
-		          {"type": "pointerDown", "button": 0},
-		          {"type": "pause", "duration": 500},
-		          {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": 50, "y": 0},
-		          {"type": "pointerUp", "button": 0}
-		        ]
-		      }
-		    ]
-		  }
+		  "actions": [
+		    {
+		      "type": "pointer",
+		      "id": "finger1",
+		      "parameters": {"pointerType": "touch"},
+		      "actions": [
+		        {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+		        {"type": "pointerDown", "button": 0},
+		        {"type": "pause", "duration": 500},
+		        {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": -50, "y": 0},
+		        {"type": "pointerUp", "button": 0}
+		      ]
+		    }, {
+		      "type": "pointer",
+		      "id": "finger2",
+		      "parameters": {"pointerType": "touch"},
+		      "actions": [
+		        {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+		        {"type": "pointerDown", "button": 0},
+		        {"type": "pause", "duration": 500},
+		        {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": 50, "y": 0},
+		        {"type": "pointerUp", "button": 0}
+		      ]
+		    }
+		  ]
 		}
 		```
 		
@@ -1689,20 +1741,18 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	
 		```json
 		{
-		  "parameters": {
-		    "actions": [
-		      {
-		        "type": "key",
-		        "id": "keyboard",
-		        "actions": [
-		          {"type": "keyDown", "value": "\uE009"},
-		          {"type": "keyDown", "value": "s"},
-		          {"type": "keyUp", "value": "\uE009"},
-		          {"type": "keyUp", "value": "s"}
-		        ]
-		      }
-		    ]
-		  }
+		  "actions": [
+		    {
+		      "type": "key",
+		      "id": "keyboard",
+		      "actions": [
+		        {"type": "keyDown", "value": "\uE009"},
+		        {"type": "keyDown", "value": "s"},
+		        {"type": "keyUp", "value": "\uE009"},
+		        {"type": "keyUp", "value": "s"}
+		      ]
+		    }
+		  ]
 		}
 		```
 		
@@ -1812,11 +1862,7 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	* Example:
 	
 		```json
-		{
-		  "parameters": {
-		    "text": "My prompt response"
-		  }
-		}
+		{"text": "My prompt response"}
 		```
 		
 * **Response value:**
@@ -1871,11 +1917,7 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	* Example:
 	
 		```json
-		{
-		  "parameters": {
-		    "scroll": false
-		  }
-		}
+		{"scroll": false}
 		```
 		
 * **Response value:**
