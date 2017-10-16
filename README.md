@@ -203,8 +203,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/alert/accept|[Accept Alert](#accept-alert)|
 |GET|/session/{session id}/alert/text|[Get Alert Text](#get-alert-text)|
 |POST|/session/{session id}/alert/text|[Send Alert Text](#send-alert-text)|
-|GET|/session/{session id}/screenshot|Take Screenshot|
-|GET|/session/{session id}/element/{element id}/screenshot|Take Element Screenshot|
+|GET|/session/{session id}/screenshot|[Take Screenshot](#take-screenshot)|
+|GET|/session/{session id}/element/{element id}/screenshot|[Take Element Screenshot](#take-element-screenshot)|
 
 ### New Session
 
@@ -1829,7 +1829,69 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	* `unsupported operation` (`500`) if the prompt is otherwise not a prompt
 
 ### Take Screenshot
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/screenshot|
+
+[Spec description](https://www.w3.org/TR/webdriver/#take-screenshot):
+> The `Take Screenshot` command takes a screenshot of the top-level browsing context's viewport.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The base64-encoded PNG image data comprising the screenshot of the initial viewport
+	* Example:
+	
+		```json
+		{
+		  "value": "iVBORw0KGgoAAAANSUhEUgAAARMAAAFBC..."
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
 ### Take Element Screenshot
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/element/{element id}/screenshot|
+
+[Spec description](https://www.w3.org/TR/webdriver/#take-element-screenshot):
+> The `Take Element Screenshot` command takes a screenshot of the visible region encompassed by the bounding rectangle of an element. If given a parameter argument scroll that evaluates to false, the element will not be scrolled into view.
+
+* **URL variables:**
+	* `session id`
+	* `element id`: the id of a web element
+* **Request parameters:** 
+	* `scroll`: boolean, whether or not to scroll the element into view before taking the screenshot. Defaults to `true`.
+	* Example:
+	
+		```json
+		{
+		  "parameters": {
+		    "scroll": false
+		  }
+		}
+		```
+		
+* **Response value:**
+	* The base64-encoded PNG image data comprising the screenshot of the initial viewport
+	* Example:
+	
+		```json
+		{
+		  "value": "iVBORw0KGgoAAAANSUhEUgAAARMAAAFBC..."
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+	* `no such element` (`404`) if the element id is unknown
 
 ## Other Topics
 
