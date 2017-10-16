@@ -197,8 +197,8 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/cookie|[Add Cookie](#add-cookie)|
 |DELETE|/session/{session id}/cookie/{name}|[Delete Cookie](#delete-cookie)|
 |DELETE|/session/{session id)/cookie|[Delete All Cookies](#delete-all-cookies)|
-|POST|/session/{session id}/actions|Perform Actions|
-|DELETE|/session/{session id}/actions|Release Actions|
+|POST|/session/{session id}/actions|[Perform Actions](#perform-actions)|
+|DELETE|/session/{session id}/actions|[Release Actions](#release-actions)|
 |POST|/session/{session id}/alert/dismiss|Dismiss Alert|
 |POST|/session/{session id}/alert/accept|Accept Alert|
 |GET|/session/{session id}/alert/text|Get Alert Text|
@@ -1596,7 +1596,141 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* `no such window` (`400`) if the top level browsing context is not open
 
 ### Perform Actions
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/actions|
+
+[Spec link](https://www.w3.org/TR/webdriver/#perform-actions).
+
+Actions are a very complex portion of the spec. Some preliminary understanding of concepts is useful:
+
+* **tick**: a slice of an action chain. Actions from different input sources can be executed simultaneously. These are first lined up from the first action. Every vertical "slice" across the different input sources' action lists is a tick. A tick is not associated with any particular time value, and lasts as long as the longest action duration inside the tick.
+* **input source**: a representation of an input device like a keyboard, mouse, finger, or pen. There can be any number of input sources. Each one has its own `id`.
+* **action**: a behavior performed by an input source. Different types of input source have different types of possible actions
+
+#### Input Sources and Corresponding Actions
+
+* `null` input source
+	* `pause`: "Used with an integer argument to specify the duration of a tick, or as a placeholder to indicate that an input source does nothing during a particular tick."
+* `key` input source
+	* `pause`: same as for `null`
+	* `keyDown`: "Used to indicate that a particular key should be held down."
+	* `keyUp`: "Used to indicate that a depressed key should be released."
+* `pointer` input source. This kind also has a `pointer type` specifying which kind of pointer it is (which can be `mouse`, `pen`, or `touch`):
+	* `pause`: same as for `null`
+	* `pointerDown`: "Used to indicate that a pointer should be depressed in some way e.g. by holding a button down (for a mouse) or by coming into contact with the active surface (for a touch or pen device)."
+	* `pointerUp`: "Used to indicate that a pointer should be released in some way e.g. by releasing a mouse button or moving a pen or touch device away from the active surface."
+	* `pointerMove`: "Used to indicate a location on the screen that a pointer should move to, either in its active (pressed) or inactive state."
+	* `pointerCancel`: "Used to cancel a pointer action."
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `actions`: a list of input source actions. In other words, a list of objects, each of which represents an input source and its associated actions. Each input source must have the following properties:
+		* `type`: String, one of `pointer`, `key`, or `none`
+		* `id`: String, a unique id chosen to represent this input source for this and future actions
+		* (Pointer-type input sources can also have a `parameters` property, which is an object with a `pointerType` key specifying either `mouse`, `pen`, or `touch`. If `parameters` is omitted, the `pointerType` is considered to be `mouse`.)
+		* `actions`: a list of action objects for this particular input source. An action object has different fields based on the kind of input device it belongs to:
+			* null input sources:
+				* `type`: can only be the string `pause`
+				* `duration`: integer >= 0, representing time in milliseconds
+			* pointer input sources:
+				* `type`: string, one of the actions listed above (`pointerDown`, etc...).
+				* If `pause`: integer property `duration` as above
+				* If `pointerUp` or `pointerDown`: integer property `button` (>= 0, representing which button is pressed/released)
+				* If `pointerMove`:
+					* `duration`: integer in ms
+					* `origin`: either (a) string, one of `viewport` or `pointer`, or (b) an object representing a web element. Defaults to `viewport` if `origin` is omitted.
+					* `x`: integer, x-value to move to, relative to either viewport, pointer, or element based on `origin`
+					* `y`: integer, y-value to move to, relative to either viewport, pointer, or element based on `origin`
+				* If `pointerCancel`: this action is not yet defined by the spec
+			* key input sources:
+				* `type`: string, one of the actions listed above (`keyUp` or `keyDown`)
+				* If `pause`: integer property `duration` as above
+				* If `keyUp` or `keyDown`:
+					* `value`: a string containing a single Unicode code point (any value in the Unicode code space). Basically, this is either a "normal" character like "A", or a Unicode code point like "\uE007" (Enter), which can include control characters.
+
+	* Example 1 (expressing a 1-second pinch-and-zoom with a 500ms wait after the fingers first touch):
+	
+		```json
+		{
+		  "parameters": {
+		    "actions": [
+		      {
+		        "type": "pointer",
+		        "id": "finger1",
+		        "parameters": {"pointerType": "touch"},
+		        "actions": [
+		          {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+		          {"type": "pointerDown", "button": 0},
+		          {"type": "pause", "duration": 500},
+		          {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": -50, "y": 0},
+		          {"type": "pointerUp", "button": 0}
+		        ]
+		      }, {
+		        "type": "pointer",
+		        "id": "finger2",
+		        "parameters": {"pointerType": "touch"},
+		        "actions": [
+		          {"type": "pointerMove", "duration": 0, "x": 100, "y": 100},
+		          {"type": "pointerDown", "button": 0},
+		          {"type": "pause", "duration": 500},
+		          {"type": "pointerMove", "duration": 1000, "origin": "pointer", "x": 50, "y": 0},
+		          {"type": "pointerUp", "button": 0}
+		        ]
+		      }
+		    ]
+		  }
+		}
+		```
+		
+	* Example 2 (equivalent to typing CTRL+S and releasing the keys, though releasing would be better performed by a call to `Release Actions`):
+	
+		```json
+		{
+		  "parameters": {
+		    "actions": [
+		      {
+		        "type": "key",
+		        "id": "keyboard",
+		        "actions": [
+		          {"type": "keyDown", "value": "\uE009"},
+		          {"type": "keyDown", "value": "s"},
+		          {"type": "keyUp", "value": "\uE009"},
+		          {"type": "keyUp", "value": "s"}
+		        ]
+		      }
+		    ]
+		  }
+		}
+		```
+		
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `invalid argument` (`400`) if `actions` is not an array, or if an action sequence is set which has a mismatched `pointerType`, or if the _inner_ `actions` is not an array, or in general if any of the requirements for parameter types and values described above are not met
+
 ### Release Actions
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|DELETE|/session/{session id}/actions|
+
+[Spec description](https://www.w3.org/TR/webdriver/#release-actions):
+> The `Release Actions` command is used to release all the keys and pointer buttons that are currently depressed. This causes events to be fired as if the state was released by an explicit series of actions. It also clears all the internal state of the virtual devices.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+
+
 ### Dismiss Alert
 ### Accept Alert
 ### Get Alert Text
