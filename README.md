@@ -1,8 +1,8 @@
 # The W3C WebDriver Spec: A Simplified Guide
 
-This document is essentially a cheat sheet for the official [WebDriver spec](https://www.w3.org/TR/webdriver/). The official spec is designed for implementers to have very detailed information about processing algorithms and so on. Much of the information in the spec is not targeted towards those who are simply writing client libraries, or even users who want a closer look at the API. It also uses language which is so exact it can sometimes obfuscate an intuitive understanding of a section.
+This document is essentially a cheat sheet for the official [WebDriver spec](https://www.w3.org/TR/webdriver/) (which has in-progress drafts available [on GitHub](https://w3c.github.io/webdriver/webdriver-spec.html)). The official spec is designed for implementers to have very detailed information about processing algorithms and so on. Much of the information in the spec is not targeted towards those who are simply writing client libraries, or even users who want a closer look at the API. It also uses language which is so exact it can sometimes obfuscate an intuitive understanding of a section.
 
-The approach used here is to simply look at the supported endpoints along with their inputs and outputs, without worrying how the implementation is supposed to work. This should be beneficial to client library implementers as well as remote end implementers looking for some quick highlights. And in most cases there are examples to illustrate
+The approach used here is to simply look at the supported endpoints along with their inputs and outputs, without worrying too much how the implementation is supposed to work. This should be beneficial to client library implementers as well as remote end implementers looking for some quick highlights. And in most cases there are examples to illustrate
 
 **DISCLAIMER**: This is _not_ the official spec. It is my interpretation of it and an attempt to present the most salient bits of it in a more digestible fashion. You should always consult the official spec before beginning work on a client or server implementation!
 
