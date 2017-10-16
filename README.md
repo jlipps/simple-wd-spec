@@ -199,10 +199,10 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |DELETE|/session/{session id)/cookie|[Delete All Cookies](#delete-all-cookies)|
 |POST|/session/{session id}/actions|[Perform Actions](#perform-actions)|
 |DELETE|/session/{session id}/actions|[Release Actions](#release-actions)|
-|POST|/session/{session id}/alert/dismiss|Dismiss Alert|
-|POST|/session/{session id}/alert/accept|Accept Alert|
-|GET|/session/{session id}/alert/text|Get Alert Text|
-|POST|/session/{session id}/alert/text|Send Alert Text|
+|POST|/session/{session id}/alert/dismiss|[Dismiss Alert](#dismiss-alert)|
+|POST|/session/{session id}/alert/accept|[Accept Alert](#accept-alert)|
+|GET|/session/{session id}/alert/text|[Get Alert Text](#get-alert-text)|
+|POST|/session/{session id}/alert/text|[Send Alert Text](#send-alert-text)|
 |GET|/session/{session id}/screenshot|Take Screenshot|
 |GET|/session/{session id}/element/{element id}/screenshot|Take Element Screenshot|
 
@@ -1732,9 +1732,102 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 
 
 ### Dismiss Alert
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/alert/dismiss|
+
+[Spec description](https://www.w3.org/TR/webdriver/#dismiss-alert):
+> The `Dismiss Alert` command dismisses a simple dialog if present. A request to dismiss an alert user prompt, which may not necessarily have a dismiss button, has the same effect as accepting it.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such alert` (`404`) if there is no current user prompt
+
 ### Accept Alert
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/alert/accept|
+
+[Spec description](https://www.w3.org/TR/webdriver/#accept-alert):
+> The `Accept Alert` command accepts a simple dialog if present.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* `null`
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such alert` (`404`) if there is no current user prompt
+
 ### Get Alert Text
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/alert/text|
+
+[Spec description](https://www.w3.org/TR/webdriver/#get-alert-text):
+> The `Get Alert Text` command returns the message of the current user prompt. If there is no current user prompt, it returns an error.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* None
+* **Response value:**
+	* The message of the user prompt
+	* Example:
+	
+		```json
+		{
+		  "value": "XSS Hax!"
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such alert` (`404`) if there is no current user prompt
+
 ### Send Alert Text
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|POST|/session/{session id}/alert/text|
+
+[Spec description](https://www.w3.org/TR/webdriver/#send-alert-text):
+> The `Send Alert Text` command sets the text field of a `window.prompt` user prompt to the given value.
+
+* **URL variables:**
+	* `session id`
+* **Request parameters:** 
+	* `text`: string to set the prompt to
+	* Example:
+	
+		```json
+		{
+		  "parameters": {
+		    "text": "My prompt response"
+		  }
+		}
+		```
+		
+* **Response value:**
+	* `null`		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `no such alert` (`404`) if there is no current user prompt
+	* `invalid argument` (`400`) if `text` is not a string
+	* `element not interactable` (`400`) if the prompt is an alert or confirmation dialog (these do not support setting text)
+	* `unsupported operation` (`500`) if the prompt is otherwise not a prompt
+
 ### Take Screenshot
 ### Take Element Screenshot
 
