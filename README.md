@@ -1059,6 +1059,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **URL variables:**
 	* `session id`
 	* `element id`: the id of an element returned in a previous call to Find Element(s)
+	* `name`: name of the attribute value to retrieve
 * **Request parameters:** 
 	* None
 * **Response value:**
@@ -1089,6 +1090,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **URL variables:**
 	* `session id`
 	* `element id`: the id of an element returned in a previous call to Find Element(s)
+	* `name`: name of the attribute property to retrieve
 * **Request parameters:** 
 	* None
 * **Response value:**
@@ -1116,6 +1118,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **URL variables:**
 	* `session id`
 	* `element id`: the id of an element returned in a previous call to Find Element(s)
+	* `property name`: name of the CSS property to retrieve
 * **Request parameters:** 
 	* None
 * **Response value:**
