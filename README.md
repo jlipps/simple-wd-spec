@@ -743,23 +743,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 * **Request parameters:** 
 	* None
 * **Response value:**
-	* A JSON representation of a "window rect" object based on the new window state:
-		* `x`: the `screenX` attribute of the `window` object
-		* `y`: the `screenY` attribute of the `window` object
-		* `width`: the width of the outer dimensions of the top-level browsing context, including browser chrome etc...
- 		* `height`: the height of the outer dimensions of the top-level browsing context, including browser chrome etc...
-	* Example:
-	
-		```json
-		{
-		  "value": {
-		    "x": 10,
-		    "y": 80,
-		    "width": 900,
-		    "height": 500
-		  }
-		}
-		```
+	* `null`
 * **Possible errors:**
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `unsupported operation` (`500`) if the remote end does not support maximizing windows
