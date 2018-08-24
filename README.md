@@ -852,7 +852,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* Example:
 	
 		```json
-		{"using": "css selector", "selector": "#foo"}
+		{"using": "css selector", "value": "#foo"}
 		```
 		
 * **Response value:**
@@ -890,7 +890,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* Example:
 	
 		```json
-		{"using": "css selector", "selector": "#foo"}
+		{"using": "css selector", "value": "#foo"}
 		```
 		
 * **Response value:**
@@ -928,7 +928,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* Example:
 	
 		```json
-		{"using": "css selector", "selector": "#foo"}
+		{"using": "css selector", "value": "#foo"}
 		```
 		
 * **Response value:**
@@ -968,7 +968,7 @@ Basically, the command takes a set of JSON parameters corresponding to the windo
 	* Example:
 	
 		```json
-		{"using": "css selector", "selector": "#foo"}
+		{"using": "css selector", "value": "#foo"}
 		```
 		
 * **Response value:**
