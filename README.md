@@ -1956,20 +1956,20 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 		```json
 		{
 			"page":{
-					"width": 29.70
-					,"height": 42.00
-				}
-			,"margin":{
-					"top": 2
-					,"bottom": 2
-					,"left": 2
-					,"right": 2
-				}
-			,"scale": 0.5
-			,"orientation":"landscape"
-			,"shrinkToFit": true
-			,"background": true
-			,"pageRanges": ["1", "1-1"]
+					"width": 29.70,
+					"height": 42.00
+				},
+			"margin":{
+					"top": 2,
+					"bottom": 2,
+					"left": 2,
+					"right": 2
+				},
+			"scale": 0.5,
+			"orientation":"landscape",
+			"shrinkToFit": true,
+			"background": true,
+			"pageRanges": ["1", "1-1"]
 		}
 		```
 * **Response value:**
