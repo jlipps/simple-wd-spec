@@ -205,6 +205,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/alert/text|[Send Alert Text](#send-alert-text)|
 |GET|/session/{session id}/screenshot|[Take Screenshot](#take-screenshot)|
 |GET|/session/{session id}/element/{element id}/screenshot|[Take Element Screenshot](#take-element-screenshot)|
+|GET|/session/{session id}/print|[Print Page](#print-page)|
 
 ### New Session
 
@@ -1937,6 +1938,56 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `stale element reference` (`404`) if the element is stale
 	* `no such element` (`404`) if the element id is unknown
+
+### Print Page
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/print|
+
+[Spec description](https://www.w3.org/TR/webdriver/#dfn-print-page):
+> The print functions are a mechanism to render the document to a paginated format. It is returned to the local end as a Base64 encoded string containing a PDF representation of the paginated document.
+
+* **URL variables:**
+	* `session id`
+
+* **Request parameters:** 
+	* Example:
+		```json
+		{
+			"page":{
+					"width": 29.70,
+					"height": 42.00
+				},
+			"margin":{
+					"top": 2,
+					"bottom": 2,
+					"left": 2,
+					"right": 2
+				},
+			"scale": 0.5,
+			"orientation":"landscape",
+			"shrinkToFit": true,
+			"background": true,
+			"pageRanges": ["1", "1-1"]
+		}
+		```
+* **Response value:**
+	* The base64-encoded PDF data
+	* Example:
+	
+		```json
+		{
+		  "value": "iVBORw0KGgoAAAANSUhEUgAAARMAAAFBC..."
+		}
+		```
+		
+* **Possible errors:**
+	* `no such window` (`400`) if the top level browsing context is not open
+	* `stale element reference` (`404`) if the element is stale
+	* `no such element` (`404`) if the element id is unknown
+
+
 
 ## Other Topics
 
