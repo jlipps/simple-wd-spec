@@ -205,6 +205,7 @@ In this section, we go through each endpoint and examine its inputs and outputs 
 |POST|/session/{session id}/alert/text|[Send Alert Text](#send-alert-text)|
 |GET|/session/{session id}/screenshot|[Take Screenshot](#take-screenshot)|
 |GET|/session/{session id}/element/{element id}/screenshot|[Take Element Screenshot](#take-element-screenshot)|
+|GET|/session/{session id}/print|[Print Page](#print-page)|
 
 ### New Session
 
@@ -1937,6 +1938,15 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 	* `no such window` (`400`) if the top level browsing context is not open
 	* `stale element reference` (`404`) if the element is stale
 	* `no such element` (`404`) if the element id is unknown
+
+### Print Page
+
+|HTTP Method|Path Template|
+|-----------|-------------|
+|GET|/session/{session id}/print|
+
+[Spec description](https://www.w3.org/TR/webdriver/#dfn-print-page):
+
 
 ## Other Topics
 
