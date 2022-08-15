@@ -1911,19 +1911,12 @@ Actions are a very complex portion of the spec. Some preliminary understanding o
 |GET|/session/{session id}/element/{element id}/screenshot|
 
 [Spec description](https://www.w3.org/TR/webdriver/#take-element-screenshot):
-> The `Take Element Screenshot` command takes a screenshot of the visible region encompassed by the bounding rectangle of an element. If given a parameter argument scroll that evaluates to false, the element will not be scrolled into view.
+> The `Take Element Screenshot` command takes a screenshot of the visible region encompassed by the bounding rectangle of an element.
 
 * **URL variables:**
 	* `session id`
 	* `element id`: the id of a web element
-* **Request parameters:** 
-	* `scroll`: boolean, whether or not to scroll the element into view before taking the screenshot. Defaults to `true`.
-	* Example:
-	
-		```json
-		{"scroll": false}
-		```
-		
+
 * **Response value:**
 	* The base64-encoded PNG image data comprising the screenshot of the initial viewport
 	* Example:
