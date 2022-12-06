@@ -617,13 +617,20 @@ The `Close Window` command closes the current top-level browsing context. Once d
 	* `id`: one of three possible types:
 		* `null`: this represents the top-level browsing context (i.e., not an iframe)
 		* a Number, representing the index of the `window` object corresponding to a frame
-		* a string representing an element id. The element must be the frame or iframe to be selected
+		* an Element object which must be the frame or iframe to be selected
 	* Example:
-	
+		* For a Number
 		```json
 		{"id": 2}
 		```
-		
+		* For an Element object
+		```json
+		{
+		  "id": {
+     		    "element-6066-11e4-a52e-4f735466cecf": "1234-5789-0abc-defg"
+   		   }
+		}
+		```		
 * **Response value:**
 	* `null`
 * **Possible errors:**
